@@ -11,24 +11,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@700&family=Archivo+Narrow:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="preload" as="image" href="tigerimages/ezgif-frame-001.jpg" fetchpriority="high">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
 
-  <!-- Preloader -->
-  <div id="preloader" class="preloader" aria-live="polite" aria-label="Loading experience">
-    <div class="preloader__inner">
-      <span class="preloader__brand">NIKE</span>
-      <div class="preloader__bar">
-        <div class="preloader__fill" id="preloader-fill"></div>
-      </div>
-      <span class="preloader__percent" id="preloader-percent">0%</span>
-    </div>
-  </div>
-
   <!-- Site Header -->
   <header class="site-header" id="site-header">
-    <a href="#" class="site-header__logo" aria-label="Nike Home">
+    <a href="index.html" class="site-header__logo" aria-label="Nike Home">
       <svg viewBox="0 0 69 32" fill="currentColor" aria-hidden="true">
         <path d="M68.56 4L18.4 25.36Q12.16 28 7.92 28q-4.8 0-6.96-3.36-1.36-2.16-.8-5.48t2.96-7.08q2-3.04 6.56-8-1.6 2.56-2.24 4.96-.88 3.52.56 5.6 1.36 2.08 4.48 2.08 2.24 0 5.04-1.08L68.56 4z"/>
       </svg>
@@ -37,8 +27,12 @@
       <a href="#first-look">New</a>
       <a href="#best-of">Air Max</a>
       <a href="#featured">Featured</a>
-      <a href="#essentials">Shop</a>
+      <a href="shop.html">Shop</a>
     </nav>
+    <a href="cart.html" class="site-header__cart" id="cart-badge" aria-label="Shopping bag, empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <span class="site-header__cart-count" id="cart-count" hidden>0</span>
+    </a>
     <button class="site-header__menu" id="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
       <span></span><span></span>
     </button>
@@ -91,7 +85,7 @@
         </p>
         <div class="first-look__actions">
           <a href="#" class="btn btn--pill">Get Notified</a>
-          <a href="#best-of" class="btn btn--pill btn--outline">Explore Air Max</a>
+          <a href="shop.html" class="btn btn--pill btn--outline">Explore Air Max</a>
         </div>
       </div>
     </section>
@@ -117,9 +111,9 @@
       <div class="carousel" id="product-carousel" role="region" aria-label="Air Max product carousel">
         <div class="carousel__track" id="carousel-track" tabindex="0">
 
-          <a href="#" class="product-card" aria-label="Air Max 90, $130, Men's Shoes">
+          <a href="product-detail.html?id=nike-air-max-90-02" class="product-card" aria-label="Air Max 90, $130, Men's Shoes">
             <div class="product-card__media">
-              <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80" alt="" loading="lazy" decoding="async" width="600" height="600">
+              <img src="assets/images/air-max-90.jpg" alt="" loading="lazy" decoding="async" width="600" height="600">
             </div>
             <div class="product-card__body">
               <h3 class="product-card__title">Air Max 90</h3>
@@ -130,7 +124,7 @@
             </div>
           </a>
 
-          <a href="#" class="product-card" aria-label="Air Max Plus, $180, Men's Shoes">
+          <a href="product-detail.html?id=nike-air-max-plus-03" class="product-card" aria-label="Air Max Plus, $180, Men's Shoes">
             <div class="product-card__media">
               <img src="assets/images/air-max-plus.jpg" alt="" loading="lazy" decoding="async" width="600" height="600">
             </div>
@@ -143,9 +137,9 @@
             </div>
           </a>
 
-          <a href="#" class="product-card" aria-label="Air Max 1, $140, Women's Shoes">
+          <a href="product-detail.html?id=nike-air-max-1-07" class="product-card" aria-label="Air Max 1, $140, Women's Shoes">
             <div class="product-card__media">
-              <img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=600&q=80" alt="" loading="lazy" decoding="async" width="600" height="600">
+              <img src="assets/images/air-max-1.jpg" alt="" loading="lazy" decoding="async" width="600" height="600">
             </div>
             <div class="product-card__body">
               <h3 class="product-card__title">Air Max 1</h3>
@@ -156,9 +150,9 @@
             </div>
           </a>
 
-          <a href="#" class="product-card" aria-label="Air Max DN, $200, Men's Shoes">
+          <a href="product-detail.html?id=nike-air-max-dn-13" class="product-card" aria-label="Air Max DN, $200, Men's Shoes">
             <div class="product-card__media">
-              <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80" alt="" loading="lazy" decoding="async" width="600" height="600">
+              <img src="assets/images/air-max-dn.jpg" alt="" loading="lazy" decoding="async" width="600" height="600">
             </div>
             <div class="product-card__body">
               <h3 class="product-card__title">Air Max DN</h3>
@@ -169,9 +163,9 @@
             </div>
           </a>
 
-          <a href="#" class="product-card" aria-label="Air Max 97, $175, Women's Shoes">
+          <a href="product-detail.html?id=nike-air-max-97-08" class="product-card" aria-label="Air Max 97, $175, Women's Shoes">
             <div class="product-card__media">
-              <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=600&q=80" alt="" loading="lazy" decoding="async" width="600" height="600">
+              <img src="assets/images/air-max-97.jpg" alt="" loading="lazy" decoding="async" width="600" height="600">
             </div>
             <div class="product-card__body">
               <h3 class="product-card__title">Air Max 97</h3>
@@ -182,7 +176,7 @@
             </div>
           </a>
 
-          <a href="#" class="product-card" aria-label="Air Max Pulse, $150, Men's Shoes">
+          <a href="product-detail.html?id=nike-air-max-pulse-01" class="product-card" aria-label="Air Max Pulse, $150, Men's Shoes">
             <div class="product-card__media">
               <img src="assets/images/air-max-pulse.jpg" alt="" loading="lazy" decoding="async" width="600" height="600">
             </div>
@@ -230,7 +224,7 @@
       </div>
       <div class="essentials__grid container container--wide">
 
-        <a href="#" class="essentials__card" aria-label="Shop Men's Nike collection">
+        <a href="shop-men.html" class="essentials__card" aria-label="Shop Men's Nike collection">
           <img
             src="assets/images/essentials-men.jpg"
             alt=""
@@ -246,7 +240,7 @@
           </div>
         </a>
 
-        <a href="#" class="essentials__card" aria-label="Shop Women's Nike collection">
+        <a href="shop-women.html" class="essentials__card" aria-label="Shop Women's Nike collection">
           <img
             src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80"
             alt=""
@@ -262,7 +256,7 @@
           </div>
         </a>
 
-        <a href="#" class="essentials__card" aria-label="Shop Kids' Nike collection">
+        <a href="shop-kids.html" class="essentials__card" aria-label="Shop Kids' Nike collection">
           <img
             src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&q=80"
             alt=""
@@ -291,33 +285,33 @@
         <div class="site-footer__col">
           <h4 class="site-footer__heading">Icons</h4>
           <ul>
-            <li><a href="#">Air Force 1</a></li>
-            <li><a href="#">Air Max</a></li>
-            <li><a href="#">Jordan</a></li>
-            <li><a href="#">Dunk</a></li>
-            <li><a href="#">Blazer</a></li>
+            <li><a href="shop.html">Air Force 1</a></li>
+            <li><a href="shop.html">Air Max</a></li>
+            <li><a href="shop.html">Jordan</a></li>
+            <li><a href="shop.html">Dunk</a></li>
+            <li><a href="shop.html">Blazer</a></li>
           </ul>
         </div>
 
         <div class="site-footer__col">
           <h4 class="site-footer__heading">Shoes</h4>
           <ul>
-            <li><a href="#">All Shoes</a></li>
-            <li><a href="#">Running</a></li>
-            <li><a href="#">Basketball</a></li>
-            <li><a href="#">Training</a></li>
-            <li><a href="#">Lifestyle</a></li>
+            <li><a href="shop.html">All Shoes</a></li>
+            <li><a href="shop.html">Running</a></li>
+            <li><a href="shop.html">Basketball</a></li>
+            <li><a href="shop.html">Training</a></li>
+            <li><a href="shop.html">Lifestyle</a></li>
           </ul>
         </div>
 
         <div class="site-footer__col">
           <h4 class="site-footer__heading">Support</h4>
           <ul>
-            <li><a href="#">Help</a></li>
-            <li><a href="#">Order Status</a></li>
-            <li><a href="#">Shipping</a></li>
-            <li><a href="#">Returns</a></li>
-            <li><a href="#">Contact Us</a></li>
+            <li><a href="support.html">Help</a></li>
+            <li><a href="support.html#order-status">Order Status</a></li>
+            <li><a href="support.html#shipping">Shipping</a></li>
+            <li><a href="support.html#returns">Returns</a></li>
+            <li><a href="support.html#contact">Contact Us</a></li>
           </ul>
         </div>
 
@@ -345,6 +339,10 @@
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
 
   <!-- App -->
+  <script src="js/products-data.js"></script>
+  <script src="js/cart-engine.js"></script>
+  <script src="js/cart-ui.js"></script>
+  <script src="js/cart-drawer.js"></script>
   <script src="js/tiger-experience.js"></script>
   <script src="js/animations.js"></script>
   <script src="js/main.js"></script>

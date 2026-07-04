@@ -1,0 +1,10 @@
+{
+  "name": "nikecommercial",
+  "private": true,
+  "scripts": {
+    "start": "serve -l 55333"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}
