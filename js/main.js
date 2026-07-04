@@ -7,9 +7,6 @@
   gsap.registerPlugin(ScrollTrigger);
 
   /* ---------- DOM Refs ---------- */
-  const preloader = document.getElementById('preloader');
-  const preloaderFill = document.getElementById('preloader-fill');
-  const preloaderPercent = document.getElementById('preloader-percent');
   const siteHeader = document.getElementById('site-header');
   const heroSection = document.getElementById('hero');
   const tigerCanvas = document.getElementById('tiger-canvas');
@@ -18,9 +15,17 @@
   const carouselPrev = document.getElementById('carousel-prev');
   const carouselNext = document.getElementById('carousel-next');
 
+  if (siteHeader) {
+    gsap.set(siteHeader, { opacity: 1, y: 0 });
+  }
+
   /* ---------- Lenis Smooth Scroll ---------- */
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  /** easeInOutCubic — premium micro-interaction curve */
+  const easePremium = (t) =>
+    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
   const lenis = new Lenis({
     duration: prefersReducedMotion ? 0.01 : 1.05,
@@ -59,51 +64,75 @@
   });
   gsap.ticker.lagSmoothing(500, 16);
 
+  /* ---------- Anchor Navigation ---------- */
+  const headerOffset = () => {
+    const value = getComputedStyle(document.documentElement).getPropertyValue('--header-height');
+    return parseInt(value, 10) || 60;
+  };
+
+  function scrollToInitialHash() {
+    const hash = window.location.hash;
+    if (!hash) return;
+
+    const target = document.querySelector(hash);
+    if (!target) return;
+
+    lenis.scrollTo(target, {
+      offset: -headerOffset(),
+      duration: prefersReducedMotion ? 0 : 1.15,
+      easing: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)),
+    });
+  }
+
+  if (window.location.hash) {
+    requestAnimationFrame(scrollToInitialHash);
+  }
+
   /* ---------- Tiger Engine ---------- */
   let tiger;
 
-  function hidePreloader() {
-    gsap.to(preloader, {
-      opacity: 0,
-      duration: 0.7,
-      ease: Motion.ease.inOut,
-      onComplete: () => {
-        preloader.classList.add('is-hidden');
-        document.body.style.overflow = '';
+  function initHeroHeaderScroll() {
+    ScrollTrigger.create({
+      trigger: heroSection,
+      start: 'bottom top+=120',
+      end: 'bottom top',
+      scrub: Motion.scrub.soft,
+      onUpdate: (self) => {
+        siteHeader.classList.toggle('is-light', self.progress >= 0.5);
       },
     });
   }
 
-  function updatePreloader(progress) {
-    const pct = Math.round(progress * 100);
-    gsap.to(preloaderFill, { width: `${pct}%`, duration: 0.2, ease: 'none' });
-    preloaderPercent.textContent = `${pct}%`;
+  function onExperienceReady() {
+    ScrollTrigger.refresh();
+
+    requestAnimationFrame(() => {
+      initHeroAnimations();
+      initHeroHeaderScroll();
+      if (window.location.hash) scrollToInitialHash();
+    });
+  }
+
+  function onTigerFullyLoaded() {
+    requestAnimationFrame(() => {
+      initScrollAnimations();
+      initHoverEffects();
+      ScrollTrigger.refresh();
+    });
   }
 
   tiger = new TigerExperience({
     section: heroSection,
     foregroundCanvas: tigerCanvas,
     ambientCanvas: ambientCanvas,
-    onProgress: updatePreloader,
-    onReady: () => {
-      updatePreloader(1);
-      ScrollTrigger.refresh();
-      tiger.attachToTicker();
-
-      requestAnimationFrame(() => {
-        hidePreloader();
-        initHeroAnimations();
-        initScrollAnimations();
-        initHoverEffects();
-      });
-    },
+    onReady: onExperienceReady,
+    onFullyLoaded: onTigerFullyLoaded,
     onError: () => {
-      preloaderPercent.textContent = 'Frames missing';
-      document.body.style.overflow = '';
+      gsap.set(siteHeader, { opacity: 1, y: 0 });
+      console.error('[TigerExperience] Failed to load hero frames.');
     },
   });
 
-  document.body.style.overflow = 'hidden';
   tiger.init();
 
   /* ---------- Hero Animations ---------- */
@@ -131,26 +160,10 @@
       end: '20% top',
       y: 14,
     });
-
-    gsap.fromTo(
-      siteHeader,
-      { opacity: 0, y: -12 },
-      { opacity: 1, y: 0, duration: 0.9, ease: Motion.ease.out, delay: 0.35 }
-    );
   }
 
   /* ---------- Scroll-Driven Animations ---------- */
   function initScrollAnimations() {
-    ScrollTrigger.create({
-      trigger: heroSection,
-      start: 'bottom top+=120',
-      end: 'bottom top',
-      scrub: Motion.scrub.soft,
-      onUpdate: (self) => {
-        siteHeader.classList.toggle('is-light', self.progress >= 0.5);
-      },
-    });
-
     /* First Look */
     const firstLook = document.querySelector('.first-look');
     if (firstLook) {
@@ -285,48 +298,100 @@
     if (!canHover || Motion.reduced) return;
 
     document.querySelectorAll('.product-card').forEach((card) => {
-      const media = card.querySelector('.product-card__media img');
-      if (!media) return;
+      const media = card.querySelector('.product-card__media');
+      const img = card.querySelector('.product-card__media img');
+      const body = card.querySelector('.product-card__body');
+      const title = card.querySelector('.product-card__title');
+      if (!img || !media) return;
 
       card.addEventListener('mouseenter', () => {
-        gsap.to(media, { scale: 1.045, duration: 0.7, ease: Motion.ease.out });
+        gsap.to(img, {
+          scale: 1.07,
+          duration: 0.75,
+          ease: easePremium,
+        });
+        gsap.to(media, {
+          y: -3,
+          duration: 0.65,
+          ease: easePremium,
+        });
+        if (body) {
+          gsap.to(body, { y: 4, duration: 0.55, ease: easePremium });
+        }
+        if (title) {
+          gsap.to(title, { letterSpacing: '0.02em', duration: 0.55, ease: easePremium });
+        }
       });
 
       card.addEventListener('mouseleave', () => {
-        gsap.to(media, { scale: 1, duration: 0.8, ease: Motion.ease.out });
+        gsap.to(img, { scale: 1, duration: 0.85, ease: easePremium });
+        gsap.to(media, { y: 0, duration: 0.75, ease: easePremium });
+        if (body) {
+          gsap.to(body, { y: 0, duration: 0.65, ease: easePremium });
+        }
+        if (title) {
+          gsap.to(title, { letterSpacing: '-0.02em', duration: 0.65, ease: easePremium });
+        }
       });
     });
 
     document.querySelectorAll('.essentials__card').forEach((card) => {
       const img = card.querySelector('img');
+      const overlay = card.querySelector('.essentials__card-overlay');
       if (!img) return;
 
       card.addEventListener('mouseenter', () => {
-        gsap.to(img, { scale: 1.05, duration: 0.85, ease: Motion.ease.out });
+        gsap.to(img, { scale: 1.055, duration: 0.85, ease: easePremium });
+        if (overlay) {
+          gsap.to(overlay, { opacity: 0.75, duration: 0.65, ease: easePremium });
+        }
       });
 
       card.addEventListener('mouseleave', () => {
-        gsap.to(img, { scale: 1, duration: 0.9, ease: Motion.ease.out });
+        gsap.to(img, { scale: 1, duration: 0.9, ease: easePremium });
+        if (overlay) {
+          gsap.to(overlay, { opacity: 1, duration: 0.75, ease: easePremium });
+        }
       });
     });
 
     document.querySelectorAll('.btn').forEach((btn) => {
       btn.addEventListener('mouseenter', () => {
-        gsap.to(btn, { y: -2, duration: 0.35, ease: Motion.ease.out });
+        gsap.to(btn, {
+          y: -3,
+          scale: 1.02,
+          duration: 0.45,
+          ease: easePremium,
+        });
       });
 
       btn.addEventListener('mouseleave', () => {
-        gsap.to(btn, { y: 0, duration: 0.45, ease: Motion.ease.out });
+        gsap.to(btn, {
+          y: 0,
+          scale: 1,
+          duration: 0.55,
+          ease: easePremium,
+        });
+      });
+    });
+
+    document.querySelectorAll('.site-header__nav a').forEach((link) => {
+      link.addEventListener('mouseenter', () => {
+        gsap.to(link, { y: -1, duration: 0.4, ease: easePremium });
+      });
+
+      link.addEventListener('mouseleave', () => {
+        gsap.to(link, { y: 0, duration: 0.5, ease: easePremium });
       });
     });
 
     [carouselPrev, carouselNext].forEach((btn) => {
       btn.addEventListener('mouseenter', () => {
-        gsap.to(btn, { scale: 1.04, duration: 0.3, ease: Motion.ease.out });
+        gsap.to(btn, { scale: 1.06, duration: 0.4, ease: easePremium });
       });
 
       btn.addEventListener('mouseleave', () => {
-        gsap.to(btn, { scale: 1, duration: 0.35, ease: Motion.ease.out });
+        gsap.to(btn, { scale: 1, duration: 0.45, ease: easePremium });
       });
     });
   }
@@ -453,18 +518,22 @@
     if (e.key === 'Escape') closeMobileMenu();
   });
 
-  /* ---------- Anchor Navigation ---------- */
-  const headerOffset = () => {
-    const value = getComputedStyle(document.documentElement).getPropertyValue('--header-height');
-    return parseInt(value, 10) || 60;
-  };
-
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+  document.querySelectorAll('a[href*="#"]').forEach((anchor) => {
     anchor.addEventListener('click', (e) => {
       const href = anchor.getAttribute('href');
-      if (!href || href === '#') return;
+      if (!href || !href.includes('#')) return;
 
-      const target = document.querySelector(href);
+      const hashIndex = href.indexOf('#');
+      const hash = href.slice(hashIndex + 1);
+      if (!hash) return;
+
+      const pathPart = href.slice(0, hashIndex);
+      const currentFile = window.location.pathname.split('/').pop() || 'index.html';
+      const linkFile = pathPart || currentFile;
+
+      if (linkFile !== currentFile && pathPart !== '') return;
+
+      const target = document.querySelector(`#${hash}`);
       if (!target) return;
 
       e.preventDefault();
