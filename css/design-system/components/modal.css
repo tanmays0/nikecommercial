@@ -1,0 +1,112 @@
+/* ARCHIVE Design System — Modal */
+
+.ds-modal,
+.quick-view {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.ds-modal[hidden],
+.quick-view[hidden] {
+  display: none;
+}
+
+.ds-modal__backdrop,
+.quick-view__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--surface-overlay);
+  animation: ds-fade-in var(--duration-fast) var(--ease-out);
+}
+
+.ds-modal__dialog,
+.quick-view__dialog {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  max-width: 56.25rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  animation: ds-fade-in var(--duration-base) var(--ease-out);
+}
+
+@media (min-width: 48rem) {
+  .quick-view__dialog,
+  .ds-modal__dialog--split {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.ds-modal__close,
+.quick-view__close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  background: var(--surface-primary);
+  font-size: var(--text-xl);
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--transition-fast);
+}
+
+.ds-modal__close:hover,
+.quick-view__close:hover {
+  background: var(--surface-secondary);
+}
+
+.ds-modal__close:focus-visible,
+.quick-view__close:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.ds-modal__body,
+.quick-view__body {
+  padding: var(--space-6);
+}
+
+.ds-modal__media img,
+.quick-view__media img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display: block;
+}
+
+.quick-view__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+body.is-modal-open,
+body.is-quick-view-open {
+  overflow: hidden;
+}
+
+.ds-modal.is-loading .ds-modal__body {
+  min-height: 12rem;
+}
+
+.ds-modal.is-error .ds-modal__body {
+  color: var(--color-error);
+}

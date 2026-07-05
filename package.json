@@ -1,5 +1,5 @@
 {
-  "name": "nikecommercial",
+  "name": "archive-marketplace",
   "private": true,
   "scripts": {
     "start": "serve -l 55333"

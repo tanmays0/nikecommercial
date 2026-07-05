@@ -1,0 +1,91 @@
+/* ARCHIVE Design System — Pagination / Load more */
+
+.ds-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-8) 0;
+}
+
+.ds-pagination__list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  list-style: none;
+}
+
+.ds-pagination__link,
+.ds-pagination__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 var(--space-3);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--surface-primary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.ds-pagination__link:hover,
+.ds-pagination__btn:hover:not(:disabled) {
+  background: var(--surface-secondary);
+  border-color: var(--neutral-400);
+}
+
+.ds-pagination__link.is-active,
+.ds-pagination__btn.is-active {
+  color: var(--text-inverse);
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.ds-pagination__link:focus-visible,
+.ds-pagination__btn:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.ds-pagination__link:disabled,
+.ds-pagination__btn:disabled,
+.ds-pagination__btn.is-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ds-pagination__ellipsis {
+  padding: 0 var(--space-2);
+  color: var(--text-muted);
+}
+
+.ds-load-more {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8) 0;
+}
+
+.ds-load-more.is-loading .ds-btn {
+  pointer-events: none;
+}
+
+.ds-load-more.is-empty {
+  display: none;
+}
+
+.ds-load-more.is-error {
+  color: var(--color-error);
+  text-align: center;
+}

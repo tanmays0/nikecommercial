@@ -1,42 +1,9 @@
+﻿@import url('design-system/index.css');
+
 /* ============================================
-   Nike Air Max Pulse — Design System
+   ARCHIVE — Page-specific styles
+   (Design tokens + components live in css/design-system/)
    ============================================ */
-
-:root {
-  --color-white: #ffffff;
-  --color-black: #111111;
-  --color-carbon: #0b0b0b;
-  --color-accent: #ffffff;
-  --color-muted: #6e6e6e;
-  --color-border: #e8e8e8;
-  --color-border-soft: #f0f0f0;
-
-  --font-heading: 'Antonio', 'Arial Narrow', sans-serif;
-  --font-body: 'Archivo Narrow', 'Helvetica Neue', sans-serif;
-
-  --header-height: 60px;
-  --container-max: 1200px;
-  --section-pad: clamp(5rem, 11vw, 8rem);
-  --section-gap: clamp(4.5rem, 10vw, 7.5rem);
-
-  /* Fluid type scale */
-  --title-size: clamp(3rem, 9.5vw, 6.25rem);
-  --title-size-sm: clamp(2.125rem, 5.5vw, 3.75rem);
-  --title-tracking: -0.035em;
-  --title-leading: 0.86;
-
-  --body-size: clamp(0.9375rem, 1.6vw, 1.0625rem);
-  --body-leading: 1.72;
-  --meta-size: clamp(0.6875rem, 1.2vw, 0.75rem);
-
-  /* Premium motion */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-premium: cubic-bezier(0.645, 0.045, 0.355, 1);
-  --transition-base: 0.55s var(--ease-premium);
-  --transition-fast: 0.4s var(--ease-premium);
-  --transition-slow: 0.75s var(--ease-premium);
-}
 
 /* Reset */
 *,
@@ -60,6 +27,18 @@ html.lenis body {
 
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
+}
+
+/* Lenis: hide native body scroll on landing only (prevents double scrollbar) */
+html.lenis.lenis-smooth body:not(.page-inner) {
+  overflow: hidden;
+}
+
+/* Inner pages use native document scroll */
+body.page-inner {
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 100dvh;
 }
 
 body {
@@ -149,28 +128,7 @@ ul {
   max-width: 1320px;
 }
 
-/* Typography */
-.eyebrow {
-  font-family: var(--font-body);
-  font-weight: 700;
-  font-size: var(--meta-size);
-  text-transform: uppercase;
-  letter-spacing: 0.3em;
-  color: var(--color-muted);
-  margin-bottom: clamp(0.875rem, 2vw, 1.125rem);
-}
-
-.section-title {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: var(--title-size);
-  text-transform: uppercase;
-  letter-spacing: var(--title-tracking);
-  line-height: var(--title-leading);
-  color: var(--color-carbon);
-  text-wrap: balance;
-  max-width: 14ch;
-}
+/* Typography â€” page-specific variants (base in design-system/typography.css) */
 
 .section-title--sm {
   font-size: var(--title-size-sm);
@@ -192,110 +150,9 @@ ul {
   font-size: clamp(1.0625rem, 2.4vw, 1.25rem);
   line-height: 1.75;
   letter-spacing: 0.01em;
-  color: var(--color-black);
+  color: var(--text-primary);
   max-width: 40rem;
   text-wrap: pretty;
-}
-
-/* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem 2.375rem;
-  border-radius: 100px;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: clamp(0.875rem, 1.5vw, 0.9375rem);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  border: 1.5px solid transparent;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  transition:
-    background var(--transition-base),
-    color var(--transition-base),
-    border-color var(--transition-base),
-    box-shadow var(--transition-base),
-    transform var(--transition-fast);
-}
-
-.btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    115deg,
-    transparent 28%,
-    rgba(255, 255, 255, 0.14) 50%,
-    transparent 72%
-  );
-  transform: translateX(-130%);
-  transition: transform 0.8s var(--ease-premium);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.btn:hover::before {
-  transform: translateX(130%);
-}
-
-.btn > * {
-  position: relative;
-  z-index: 1;
-}
-
-.btn:active {
-  transition-duration: 0.15s;
-}
-
-.btn--pill {
-  background: var(--color-black);
-  color: var(--color-accent);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
-}
-
-.btn--pill:hover {
-  background: var(--color-carbon);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
-}
-
-.btn--outline {
-  background: transparent;
-  color: var(--color-black);
-  border-color: var(--color-black);
-  box-shadow: none;
-}
-
-.btn--outline::before {
-  background: linear-gradient(
-    115deg,
-    transparent 28%,
-    rgba(0, 0, 0, 0.06) 50%,
-    transparent 72%
-  );
-}
-
-.btn--outline:hover {
-  background: var(--color-black);
-  color: var(--color-white);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
-}
-
-.btn--white {
-  background: var(--color-white);
-  color: var(--color-black);
-  padding: 0.75rem 1.625rem;
-  font-size: 0.8125rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.btn--white:hover {
-  background: var(--color-white);
-  opacity: 0.92;
 }
 
 /* ============================================
@@ -398,7 +255,7 @@ ul {
 .site-header.is-light {
   mix-blend-mode: normal;
   color: var(--color-black);
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(242, 238, 230, 0.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   pointer-events: auto;
@@ -415,8 +272,17 @@ ul {
 }
 
 .site-header__logo svg {
-  width: 48px;
-  height: auto;
+  width: auto;
+  height: 20px;
+}
+
+.site-header__logo .site-header__wordmark {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  fill: currentColor;
 }
 
 .site-header__nav {
@@ -487,7 +353,7 @@ ul {
 }
 
 /* ============================================
-   Hero — Tiger Engine
+   Hero â€” Tiger Engine
    ============================================ */
 
 .hero {
@@ -514,7 +380,7 @@ ul {
   isolation: isolate;
 }
 
-/* Premium legibility wash — sits above canvases, below type */
+/* Premium legibility wash â€” sits above canvases, below type */
 .hero__canvas-stage::after {
   content: '';
   position: absolute;
@@ -534,7 +400,7 @@ ul {
   opacity: 0.92;
 }
 
-/* Ambient canvas — soft colour wash over the run */
+/* Ambient canvas â€” soft colour wash over the run */
 .hero__ambient {
   position: absolute;
   inset: 0;
@@ -547,7 +413,7 @@ ul {
   pointer-events: none;
 }
 
-/* Foreground canvas — cheetah sequence */
+/* Foreground canvas â€” cheetah sequence */
 .hero__foreground {
   position: absolute;
   inset: 0;
@@ -556,7 +422,7 @@ ul {
   z-index: 2;
 }
 
-/* Gradient atmosphere — depth without obscuring the run */
+/* Gradient atmosphere â€” depth without obscuring the run */
 .hero__atmosphere {
   position: absolute;
   inset: 0;
@@ -599,7 +465,7 @@ ul {
   );
 }
 
-/* Overlay content — editorial hierarchy */
+/* Overlay content â€” editorial hierarchy */
 .hero__overlay {
   position: absolute;
   inset: 0;
@@ -1180,7 +1046,7 @@ section[id] {
 }
 
 /* ============================================
-   Motion — reduced motion
+   Motion â€” reduced motion
    ============================================ */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1208,7 +1074,7 @@ section[id] {
 }
 
 /* ============================================
-   Inner Pages — Shop, Product, Support
+   Inner Pages â€” Shop, Product, Support
    ============================================ */
 
 .visually-hidden {
@@ -1228,10 +1094,18 @@ body.page-inner .site-header {
   opacity: 1;
   pointer-events: auto;
   color: var(--color-black);
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(242, 238, 230, 0.97);
   border-bottom: 1px solid var(--color-border);
+}
+
+/* Inner pages never need a live backdrop blur (the header background is
+   near-opaque). A fixed, full-width blur layer over image-heavy grids forces
+   the browser to re-rasterize on every paint — the cause of multi-second
+   freezes when overlays (cart drawer) animate. Landing page keeps its blur. */
+body.page-inner .site-header,
+body.page-inner .site-header.is-light {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 .site-header__nav a[aria-current="page"] {
@@ -1392,69 +1266,7 @@ body.page-inner .site-header {
 @media (min-width: 1200px) {
   .shop-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.75rem;
-  }
-}
-
-.shop-card {
-  display: flex;
-  flex-direction: column;
-  color: inherit;
-}
-
-.shop-card__media {
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  border-radius: 3px;
-  margin-bottom: 1.125rem;
-  background: var(--color-white);
-  transition:
-    border-color var(--transition-base),
-    box-shadow var(--transition-slow);
-}
-
-.shop-card:hover .shop-card__media {
-  border-color: var(--color-black);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.09);
-}
-
-.shop-card__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.shop-card__media--dual {
-  position: relative;
-}
-
-.shop-card__media--dual .shop-card__img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: opacity 0.55s var(--ease-premium);
-}
-
-.shop-card__media--dual .shop-card__img--hover {
-  opacity: 0;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .shop-card:hover .shop-card__media--dual .shop-card__img--primary {
-    opacity: 0;
-  }
-
-  .shop-card:hover .shop-card__media--dual .shop-card__img--hover {
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .shop-card__media--dual .shop-card__img {
-    transition: none;
+    gap: var(--space-7);
   }
 }
 
@@ -1462,40 +1274,10 @@ body.page-inner .site-header {
   min-width: 0;
 }
 
-.shop-grid.is-updating {
-  opacity: 0.45;
-  transition: opacity 0.28s var(--ease-premium);
-}
-
-.shop-filters__select {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1.5px solid var(--color-border);
-  border-radius: 3px;
-  font-family: var(--font-body);
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--color-black);
-  background: var(--color-white);
-  cursor: pointer;
-  transition: border-color var(--transition-fast);
-}
-
-.shop-filters__select:hover,
-.shop-filters__select:focus-visible {
-  border-color: var(--color-black);
-  outline: none;
-}
-
-.shop-empty {
-  padding: clamp(3rem, 6vw, 5rem) 0;
-  text-align: center;
-}
-
 .shop-empty p {
-  margin-bottom: 1.25rem;
-  font-size: 1rem;
-  color: var(--color-carbon);
+  margin-bottom: var(--space-5);
+  font-size: var(--text-base);
+  color: var(--neutral-950);
 }
 
 .shop-categories a.shop-categories__btn {
@@ -1693,102 +1475,8 @@ body.page-inner .site-header {
   width: 100%;
 }
 
-/* Accordion */
-.accordion {
-  border-top: 1px solid var(--color-border);
-}
-
-.accordion__item {
-  border-bottom: 1px solid var(--color-border);
-}
-
-.accordion__trigger {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 1.25rem 0;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-black);
-  text-align: left;
-  transition: opacity var(--transition-fast);
-}
-
-.accordion__trigger:hover {
-  opacity: 0.7;
-}
-
-.accordion__icon {
-  width: 14px;
-  height: 14px;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.accordion__icon::before,
-.accordion__icon::after {
-  content: '';
-  position: absolute;
-  background: currentColor;
-  transition: transform var(--transition-base);
-}
-
-.accordion__icon::before {
-  top: 50%;
-  left: 0;
-  width: 100%;
-  height: 1.5px;
-  transform: translateY(-50%);
-}
-
-.accordion__icon::after {
-  top: 0;
-  left: 50%;
-  width: 1.5px;
-  height: 100%;
-  transform: translateX(-50%);
-}
-
-.accordion__item.is-open .accordion__icon::after {
-  transform: translateX(-50%) rotate(90deg);
-  opacity: 0;
-}
-
-.accordion__panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.55s var(--ease-premium);
-}
-
-.accordion__item.is-open .accordion__panel {
-  grid-template-rows: 1fr;
-}
-
-.accordion__panel-inner {
-  overflow: hidden;
-}
-
 .accordion__content {
-  padding-bottom: 1.25rem;
-  font-size: 0.9375rem;
-  line-height: 1.7;
-  color: var(--color-muted);
   max-width: 36rem;
-}
-
-.accordion__content a {
-  color: var(--color-black);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  transition: opacity var(--transition-fast);
-}
-
-.accordion__content a:hover {
-  opacity: 0.65;
 }
 
 /* Support */
@@ -1815,7 +1503,13 @@ body.page-inner .site-header {
   transition: border-color var(--transition-fast);
 }
 
-.support-search__input:focus {
+.support-search__input:focus-visible {
+  outline: 2px solid var(--color-accent, #0066cc);
+  outline-offset: 2px;
+  border-color: var(--color-black);
+}
+
+.support-search__input:focus:not(:focus-visible) {
   outline: none;
   border-color: var(--color-black);
 }
@@ -2011,33 +1705,8 @@ body.page-inner .site-header__cart-count {
 }
 
 .site-header:not(.is-light):not(.site-header--inner) .site-header__cart-count {
-  background: var(--color-white);
-  color: var(--color-black);
-}
-
-.cart-toast {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 50%;
-  z-index: 10001;
-  padding: 0.875rem 1.5rem;
-  background: var(--color-black);
-  color: var(--color-white);
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  border-radius: 3px;
-  transform: translate(-50%, 120%);
-  opacity: 0;
-  transition:
-    transform 0.55s var(--ease-premium),
-    opacity 0.55s var(--ease-premium);
-  pointer-events: none;
-}
-
-.cart-toast.is-visible {
-  transform: translate(-50%, 0);
-  opacity: 1;
+  background: var(--surface-primary);
+  color: var(--text-primary);
 }
 
 /* Cart page */
@@ -2298,7 +1967,7 @@ body.page-inner .site-header__cart-count {
   color: var(--color-white);
 }
 
-/* Product detail — split screen */
+/* Product detail â€” split screen */
 .product-detail {
   display: grid;
   grid-template-columns: 1fr;
@@ -2635,10 +2304,3 @@ body.page-inner .site-header__cart-count {
 body.is-cart-drawer-open {
   overflow: hidden;
 }
-
-@media (min-width: 768px) {
-  .site-header__cart {
-    margin-right: 0.25rem;
-  }
-}
-

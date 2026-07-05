@@ -1,0 +1,211 @@
+/* ============================================================
+   ARCHIVE Design System — Tokens (single source of truth)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ── ARCHIVE brand palette (warm-neutral luxury-thrift) ── */
+  --color-bone: #f2eee6; /* primary background */
+  --color-ink: #181510; /* primary text / logo */
+  --color-stone: #c9c0b4; /* borders, dividers, secondary surfaces */
+  --color-clay: #a9522f; /* primary accent (CTAs, sale/highlight) */
+  --color-olive: #6b6a54; /* secondary accent (tags, badges) */
+  --color-denim: #4c5b66; /* tertiary accent, used sparingly */
+
+  /* ── Color: base (warm neutral ramp derived from bone→ink) ── */
+  --neutral-0: #f6f2ea;
+  --neutral-50: #f2eee6;
+  --neutral-100: #e8e2d6;
+  --neutral-200: #d7cfc0;
+  --neutral-300: #c9c0b4;
+  --neutral-400: #a49a89;
+  --neutral-500: #7c7565;
+  --neutral-600: #5c5648;
+  --neutral-700: #423d33;
+  --neutral-800: #2a2620;
+  --neutral-900: #201c16;
+  --neutral-950: #181510;
+
+  --surface-primary: var(--color-bone);
+  --surface-secondary: #eae4d8;
+  --surface-inverse: var(--color-ink);
+  --surface-overlay: rgb(24 21 16 / 0.55);
+
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--neutral-700);
+  --text-muted: var(--neutral-500);
+  --text-inverse: var(--color-bone);
+  --text-disabled: var(--neutral-400);
+
+  --accent-primary: var(--color-clay);
+  --accent-primary-hover: #944726;
+  --accent-primary-active: #7f3d20;
+  --accent-on-accent: #f6f2ea;
+
+  --color-success: #4f6b3a;
+  --color-success-surface: #eef1e6;
+  --color-error: #a63a2a;
+  --color-error-surface: #f7ece8;
+  --color-warning: #b07423;
+  --color-warning-surface: #f6efe1;
+  --color-sale: var(--color-clay);
+  --color-sale-surface: #f4e9e2;
+
+  --border-default: var(--color-stone);
+  --border-subtle: #ded7c9;
+  --border-strong: var(--color-ink);
+  --border-focus: var(--text-primary);
+  --border-error: var(--color-error);
+  --border-disabled: var(--color-stone);
+
+  /* Legacy aliases (backward compat — do not use in new components) */
+  --color-white: var(--surface-primary);
+  --color-black: var(--text-primary);
+  --color-carbon: var(--neutral-950);
+  --color-accent: var(--accent-primary);
+  --color-muted: var(--text-muted);
+  --color-danger: var(--color-error);
+  --color-danger-bg: var(--color-error-surface);
+  --color-success-bg: var(--color-success-surface);
+  --color-warning-bg: var(--color-warning-surface);
+  --color-info: #0066cc;
+  --color-info-bg: #e8f4fd;
+  --color-border: var(--border-default);
+  --color-border-soft: var(--border-subtle);
+  --color-off-white: var(--surface-secondary);
+
+  /* ── Typography ── */
+  --font-display: 'Fraunces', 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-ui: 'General Sans', 'Inter', system-ui, 'Helvetica Neue', Arial, sans-serif;
+  --font-heading: var(--font-display);
+  --font-body: var(--font-ui);
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.125rem;
+  --text-lg: 1.5rem;
+  --text-xl: 2rem;
+  --text-2xl: 3rem;
+  --text-3xl: 4rem;
+  --text-4xl: 6rem;
+
+  --leading-xs: 1.35;
+  --leading-sm: 1.45;
+  --leading-base: 1.6;
+  --leading-md: 1.55;
+  --leading-lg: 1.35;
+  --leading-xl: 1.2;
+  --leading-2xl: 1.08;
+  --leading-3xl: 1.05;
+  --leading-4xl: 0.95;
+
+  --tracking-tight: -0.035em;
+  --tracking-snug: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.08em;
+  --tracking-widest: 0.12em;
+  --tracking-display: 0.3em;
+
+  --type-display-fluid: clamp(3rem, 9.5vw, 6rem);
+  --type-headline-fluid: clamp(2.125rem, 5.5vw, 3.75rem);
+  --type-body-fluid: clamp(0.9375rem, 1.6vw, 1.0625rem);
+  --type-meta-fluid: clamp(0.6875rem, 1.2vw, 0.75rem);
+
+  /* Legacy type aliases */
+  --title-size: var(--type-display-fluid);
+  --title-size-sm: var(--type-headline-fluid);
+  --title-tracking: var(--tracking-tight);
+  --title-leading: 0.86;
+  --body-size: var(--type-body-fluid);
+  --body-leading: 1.72;
+  --meta-size: var(--type-meta-fluid);
+
+  /* ── Spacing (4px base rhythm) ── */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-9: 2.25rem;
+  --space-10: 2.5rem;
+  --space-11: 3rem;
+  --space-12: 4rem;
+
+  /* ── Breakpoints ── */
+  --bp-mobile: 23.4375rem;
+  --bp-tablet: 48rem;
+  --bp-laptop: 64rem;
+  --bp-desktop: 90rem;
+  --bp-wide: 120rem;
+
+  /* ── Grid ── */
+  --grid-columns: 12;
+  --gutter-mobile: var(--space-4);
+  --gutter-tablet: var(--space-6);
+  --gutter-laptop: var(--space-8);
+  --gutter-desktop: var(--space-10);
+  --gutter-wide: var(--space-12);
+  --container-max: 75rem;
+  --container-wide: 82.5rem;
+  --container-padding: clamp(var(--space-5), 4vw, var(--space-10));
+
+  /* ── Layout ── */
+  --header-height: 3.75rem;
+  --section-pad: clamp(var(--space-11), 11vw, var(--space-12));
+  --section-gap: clamp(4.5rem, 10vw, 7.5rem);
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-pill: 999px;
+  --shadow-sm: 0 2px 12px rgb(10 10 10 / 0.08);
+  --shadow-md: 0 8px 28px rgb(10 10 10 / 0.14);
+  --shadow-lg: 0 12px 40px rgb(10 10 10 / 0.12);
+  --z-dropdown: 90;
+  --z-sticky: 100;
+  --z-drawer: 150;
+  --z-modal: 200;
+  --z-toast: 300;
+
+  /* ── Motion ── */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-premium: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --duration-fast: 0.2s;
+  --duration-base: 0.4s;
+  --duration-slow: 0.55s;
+  --transition-base: var(--duration-slow) var(--ease-premium);
+  --transition-fast: var(--duration-base) var(--ease-premium);
+  --transition-slow: 0.75s var(--ease-premium);
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --container-padding: clamp(var(--space-6), 4vw, var(--space-10));
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --container-padding: clamp(var(--space-8), 4vw, var(--space-10));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0.01ms;
+    --duration-base: 0.01ms;
+    --duration-slow: 0.01ms;
+    --transition-base: none;
+    --transition-fast: none;
+    --transition-slow: none;
+  }
+}

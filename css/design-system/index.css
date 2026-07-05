@@ -1,0 +1,29 @@
+/* ARCHIVE Design System — Master entry */
+
+@import url('tokens.css');
+@import url('typography.css');
+@import url('grid.css');
+@import url('base.css');
+
+@import url('components/button.css');
+@import url('components/form.css');
+@import url('components/product-card.css');
+@import url('components/product-picture.css');
+@import url('components/price.css');
+@import url('components/rating.css');
+@import url('components/badge.css');
+@import url('components/nav.css');
+@import url('components/footer.css');
+@import url('components/modal.css');
+@import url('components/drawer.css');
+@import url('components/toast.css');
+@import url('components/skeleton.css');
+@import url('components/empty-state.css');
+@import url('components/pagination.css');
+@import url('components/breadcrumb.css');
+@import url('components/tabs.css');
+@import url('components/accordion.css');
+@import url('components/carousel.css');
+@import url('components/patterns.css');
+@import url('components/commerce.css');
+@import url('components/motion.css');

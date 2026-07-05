@@ -1,0 +1,97 @@
+/* ARCHIVE Design System — Footer */
+
+.site-footer {
+  background: var(--neutral-950);
+  color: var(--text-inverse);
+  padding: var(--space-11) 0 var(--space-8);
+}
+
+.site-footer__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+}
+
+@media (min-width: 48rem) {
+  .site-footer__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .site-footer__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-10);
+  }
+}
+
+.site-footer__heading {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-widest);
+  margin-bottom: var(--space-4);
+  color: var(--text-inverse);
+}
+
+.site-footer__col ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.site-footer__col a {
+  font-size: var(--text-sm);
+  color: rgb(255 255 255 / 0.75);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.site-footer__col a:hover {
+  color: var(--text-inverse);
+  text-decoration: underline;
+}
+
+.site-footer__col a:focus-visible {
+  outline: 2px solid var(--text-inverse);
+  outline-offset: 2px;
+}
+
+.site-footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  padding: var(--space-4) 0;
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+  margin-top: var(--space-6);
+}
+
+.site-footer__legal a {
+  color: rgb(255 255 255 / 0.75);
+  font-size: var(--text-xs);
+  text-decoration: none;
+}
+
+.site-footer__legal a:hover {
+  color: var(--text-inverse);
+  text-decoration: underline;
+}
+
+.site-footer__bottom {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+}
+
+.site-footer__bottom p {
+  font-size: var(--text-xs);
+  color: rgb(255 255 255 / 0.55);
+  line-height: var(--leading-sm);
+}
+
+.site-footer__disclaimer {
+  max-width: 60ch;
+  margin-bottom: var(--space-3);
+  color: rgb(255 255 255 / 0.42);
+}

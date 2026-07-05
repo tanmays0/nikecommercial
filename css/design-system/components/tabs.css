@@ -1,0 +1,90 @@
+/* ARCHIVE Design System — Tabs */
+
+.ds-tabs {
+  border-bottom: 1px solid var(--border-default);
+}
+
+.ds-tabs__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.ds-tabs__tab {
+  position: relative;
+  padding: var(--space-4) var(--space-5);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.ds-tabs__tab::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: transparent;
+  transition: background var(--transition-fast);
+}
+
+.ds-tabs__tab:hover:not(:disabled) {
+  color: var(--text-primary);
+}
+
+.ds-tabs__tab.is-active {
+  color: var(--text-primary);
+}
+
+.ds-tabs__tab.is-active::after {
+  background: var(--text-primary);
+}
+
+.ds-tabs__tab:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.ds-tabs__tab:disabled,
+.ds-tabs__tab.is-disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.ds-tabs__panel {
+  padding: var(--space-6) 0;
+}
+
+.ds-tabs__panel[hidden] {
+  display: none;
+}
+
+.ds-tabs.is-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.ds-tabs.is-error .ds-tabs__panel {
+  color: var(--color-error);
+}
+
+/* Product PDP tabs alias */
+.product-tabs {
+  border-top: 1px solid var(--border-default);
+  margin-top: var(--space-8);
+}
+
+.product-tabs .ds-tabs__tab,
+.product-tabs__trigger {
+  padding: var(--space-4) 0;
+  margin-right: var(--space-6);
+}

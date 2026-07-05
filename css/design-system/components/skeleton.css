@@ -1,0 +1,49 @@
+/* ARCHIVE Design System — Skeleton loader */
+
+.ds-skeleton {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    var(--surface-secondary) 0%,
+    var(--neutral-100) 50%,
+    var(--surface-secondary) 100%
+  );
+  background-size: 200% 100%;
+  animation: ds-shimmer 1.4s ease infinite;
+  border-radius: var(--radius-md);
+}
+
+.ds-skeleton--text {
+  height: 0.875rem;
+  margin-bottom: var(--space-2);
+}
+
+.ds-skeleton--title {
+  height: 1.25rem;
+  width: 70%;
+  margin-bottom: var(--space-3);
+}
+
+.ds-skeleton--media {
+  aspect-ratio: 4 / 5;
+  width: 100%;
+}
+
+.ds-skeleton--avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+}
+
+.ds-skeleton--button {
+  height: 2.75rem;
+  width: 8rem;
+  border-radius: var(--radius-pill);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-skeleton {
+    animation: none;
+    background: var(--surface-secondary);
+  }
+}

@@ -1,0 +1,54 @@
+/* ARCHIVE Design System — Breadcrumb */
+
+.ds-breadcrumb {
+  padding: var(--space-4) 0;
+}
+
+.ds-breadcrumb__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.ds-breadcrumb__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.ds-breadcrumb__item:not(:last-child)::after {
+  content: '/';
+  color: var(--neutral-300);
+  font-weight: 400;
+}
+
+.ds-breadcrumb__link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.ds-breadcrumb__link:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.ds-breadcrumb__link:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.ds-breadcrumb__current {
+  color: var(--text-primary);
+}
+
+.ds-breadcrumb.is-empty {
+  display: none;
+}

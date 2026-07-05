@@ -1,0 +1,143 @@
+/* ARCHIVE Design System — Typography utilities */
+
+.type-xs {
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  letter-spacing: var(--tracking-wide);
+}
+
+.type-sm {
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  letter-spacing: var(--tracking-normal);
+}
+
+.type-base {
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  letter-spacing: var(--tracking-normal);
+}
+
+.type-md {
+  font-size: var(--text-md);
+  line-height: var(--leading-md);
+  letter-spacing: var(--tracking-snug);
+}
+
+.type-lg {
+  font-size: var(--text-lg);
+  line-height: var(--leading-lg);
+  letter-spacing: var(--tracking-snug);
+}
+
+.type-xl {
+  font-size: var(--text-xl);
+  line-height: var(--leading-xl);
+  letter-spacing: var(--tracking-tight);
+}
+
+.type-2xl {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  line-height: var(--leading-2xl);
+  letter-spacing: var(--tracking-tight);
+  text-transform: uppercase;
+}
+
+.type-3xl {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  line-height: var(--leading-3xl);
+  letter-spacing: var(--tracking-tight);
+  text-transform: uppercase;
+}
+
+.type-4xl {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  line-height: var(--leading-4xl);
+  letter-spacing: var(--tracking-tight);
+  text-transform: uppercase;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-ui {
+  font-family: var(--font-ui);
+}
+
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-inverse {
+  color: var(--text-inverse);
+}
+
+.text-accent {
+  color: var(--accent-primary);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.text-error {
+  color: var(--color-error);
+}
+
+.text-warning {
+  color: var(--color-warning);
+}
+
+.text-sale {
+  color: var(--color-sale);
+}
+
+.eyebrow {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: var(--type-meta-fluid);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-display);
+  color: var(--text-muted);
+  margin-bottom: clamp(var(--space-3), 2vw, var(--space-4));
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--type-display-fluid);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-tight);
+  line-height: 0.86;
+  color: var(--neutral-950);
+  text-wrap: balance;
+  max-width: 14ch;
+}
+
+.section-title--sm {
+  font-size: var(--type-headline-fluid);
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  max-width: 16ch;
+}
+
+.section-lead {
+  font-size: clamp(var(--text-md), 2.4vw, var(--text-lg));
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+  color: var(--text-primary);
+  max-width: 40rem;
+  text-wrap: pretty;
+}

@@ -1,0 +1,132 @@
+/* ============================================
+   Motion & Interaction System (Phase 5)
+   - Scroll reveals (JS-gated), page transitions,
+     micro-interactions, global reduced-motion.
+   - Animate transform/opacity only.
+   ============================================ */
+
+/* ---------- Global reduced-motion honor ----------
+   Applies everywhere, not just the hero. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Scroll reveals ----------
+   Gated on html.js so content is never hidden when JS is off
+   or when the user prefers reduced motion. */
+html.js:not(.motion-reduce) [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  will-change: transform, opacity;
+}
+
+html.js:not(.motion-reduce) [data-reveal].is-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 0.62s cubic-bezier(0.16, 0.84, 0.44, 1),
+    transform 0.62s cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+/* A gentler, faster variant for dense grids */
+html.js:not(.motion-reduce) [data-reveal="fade"] {
+  transform: translate3d(0, 12px, 0);
+}
+
+/* ---------- Page transitions ----------
+   Enter: content rises + fades on load.
+   Exit: content lifts + fades before navigation. */
+html.js:not(.motion-reduce) #main-content.is-page-enter {
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+}
+
+html.js:not(.motion-reduce) #main-content.is-page-ready {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+html.js:not(.motion-reduce) #main-content.is-page-exit {
+  opacity: 0;
+  transform: translate3d(0, -8px, 0);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  pointer-events: none;
+}
+
+/* ---------- Micro-interaction keyframes ---------- */
+@keyframes fx-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.28); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fx-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fx-shake {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  20% { transform: translate3d(-5px, 0, 0); }
+  40% { transform: translate3d(4px, 0, 0); }
+  60% { transform: translate3d(-3px, 0, 0); }
+  80% { transform: translate3d(2px, 0, 0); }
+}
+
+html:not(.motion-reduce) .fx-pop {
+  animation: fx-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html:not(.motion-reduce) .fx-pulse {
+  animation: fx-pulse 0.28s ease;
+}
+
+html:not(.motion-reduce) .fx-shake {
+  animation: fx-shake 0.3s ease;
+}
+
+/* Form validation feedback: shake the field the moment it becomes invalid. */
+html:not(.motion-reduce) .form-field input.is-invalid,
+html:not(.motion-reduce) .form-field textarea.is-invalid,
+html:not(.motion-reduce) .form-field select.is-invalid,
+html:not(.motion-reduce) input.is-invalid,
+html:not(.motion-reduce) .is-invalid > input {
+  animation: fx-shake 0.3s ease;
+}
+
+/* Cart/wishlist header badge cue (driven by MotionFX via events). */
+html:not(.motion-reduce) .site-header__cart-count.fx-pop,
+html:not(.motion-reduce) .site-header__badge-count.fx-pop {
+  animation: fx-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------- Toast entrance/exit polish ----------
+   Enhances the existing show/hide with a transform cue. */
+html:not(.motion-reduce) .toast,
+html:not(.motion-reduce) #cart-toast {
+  transition:
+    opacity 0.26s ease,
+    transform 0.26s cubic-bezier(0.16, 0.84, 0.44, 1),
+    visibility 0.26s ease;
+}
+
+/* ---------- Skeleton shimmer respects reduced-motion ----------
+   (Skeletons remain visible; only the sweep pauses.) */
+html.motion-reduce .ds-skeleton,
+html.motion-reduce .skeleton {
+  animation: none !important;
+}

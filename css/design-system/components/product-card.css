@@ -1,0 +1,183 @@
+/* ARCHIVE Design System — Product card */
+
+.ds-product-card,
+.shop-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.ds-product-card:hover,
+.shop-card:hover {
+  opacity: 0.92;
+}
+
+.ds-product-card:focus-visible,
+.shop-card:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: var(--space-2);
+}
+
+.ds-product-card__media,
+.shop-card__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  background: var(--surface-primary);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-slow),
+    transform var(--transition-base);
+}
+
+.ds-product-card:hover .ds-product-card__media,
+.shop-card:hover .shop-card__media {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+  transform: scale(1.005);
+}
+
+.ds-product-card__media img,
+.shop-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.shop-card__media--dual {
+  position: relative;
+}
+
+.shop-card__media--dual .shop-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity var(--transition-base);
+}
+
+.shop-card__media--dual .shop-card__img--hover {
+  opacity: 0;
+}
+
+@media (hover: hover) {
+  .shop-card:hover .shop-card__media--dual .shop-card__img--primary {
+    opacity: 0;
+  }
+
+  .shop-card:hover .shop-card__media--dual .shop-card__img--hover {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shop-card__media--dual .shop-card__img {
+    transition: none;
+  }
+}
+
+.ds-product-card__body {
+  padding-top: var(--space-4);
+}
+
+.shop-card__brand {
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-clay);
+  margin-bottom: var(--space-1);
+}
+
+.ds-product-card__title,
+.shop-card__title {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-normal);
+  line-height: var(--leading-sm);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.ds-product-card__meta,
+.shop-card__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.ds-product-card__tag,
+.shop-card__tag {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.shop-card__condition {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ds-product-card.is-loading {
+  pointer-events: none;
+}
+
+.ds-product-card.is-loading .ds-product-card__media {
+  background: linear-gradient(
+    90deg,
+    var(--surface-secondary) 0%,
+    var(--neutral-100) 50%,
+    var(--surface-secondary) 100%
+  );
+  background-size: 200% 100%;
+  animation: ds-shimmer 1.4s ease infinite;
+}
+
+.shop-card__quick-view {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-4);
+  transform: translateX(-50%) translateY(var(--space-2));
+  opacity: 0;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  background: var(--surface-primary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: opacity var(--duration-fast), transform var(--duration-fast);
+  z-index: 2;
+}
+
+.shop-card:hover .shop-card__quick-view,
+.shop-card:focus-within .shop-card__quick-view {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.shop-card__quick-view:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.shop-grid.is-updating {
+  opacity: 0.6;
+  transition: opacity var(--duration-fast);
+}

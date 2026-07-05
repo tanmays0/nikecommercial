@@ -1,0 +1,106 @@
+/* ARCHIVE Design System — Navigation (mega menu + header actions) */
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+
+.site-header__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius-pill);
+  transition: background var(--transition-fast);
+}
+
+.site-header:not(.is-light) .site-header__icon:hover {
+  background: rgb(255 255 255 / 0.1);
+}
+
+.is-light .site-header__icon:hover {
+  background: var(--surface-secondary);
+}
+
+.site-header__icon svg {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+.site-mega-nav {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--surface-primary);
+  border-top: 1px solid var(--border-default);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+  pointer-events: auto;
+}
+
+.site-mega-nav[hidden] {
+  display: none;
+}
+
+.site-mega-nav__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+  padding: var(--space-6) var(--container-padding);
+  max-width: var(--container-max);
+  margin-inline: auto;
+}
+
+@media (min-width: 48rem) {
+  .site-mega-nav__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .site-mega-nav__grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.site-mega-nav__heading {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-widest);
+  margin: 0 0 var(--space-3);
+  color: var(--neutral-950);
+}
+
+.site-mega-nav__link {
+  display: block;
+  padding: var(--space-1) 0;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.site-mega-nav__link:hover,
+.site-mega-nav__link[aria-current='page'] {
+  color: var(--accent-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.site-mega-nav__link:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.site-mega-nav__link--all {
+  margin-top: var(--space-2);
+  font-weight: 600;
+}
