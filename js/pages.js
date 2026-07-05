@@ -1,5 +1,5 @@
 /**
- * Nike Commercial — Sub-page interactions (Lenis, menu, accordions, filters)
+ * ARCHIVE — Sub-page interactions (Lenis, menu, accordions, filters)
  */
 (function () {
   'use strict';
@@ -10,41 +10,59 @@
   const easePremium = (t) =>
     t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
-  /* ---------- Lenis Smooth Scroll ---------- */
-  const lenis = new Lenis({
-    duration: prefersReducedMotion ? 0.01 : 1.05,
-    easing: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)),
-    smoothWheel: !prefersReducedMotion,
-    wheelMultiplier: 0.9,
-    touchMultiplier: 1.6,
-    infinite: false,
-  });
+  /* ---------- Smooth scroll (Lenis on landing only; native on inner pages) ---------- */
+  const isInnerPage = document.body.classList.contains('page-inner');
+  let lenis = null;
 
-  if (typeof gsap !== 'undefined') {
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(500, 16);
-  } else {
-    function raf(time) {
-      lenis.raf(time);
+  if (!isInnerPage && typeof Lenis !== 'undefined') {
+    lenis = new Lenis({
+      duration: prefersReducedMotion ? 0.01 : 1.05,
+      easing: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)),
+      smoothWheel: !prefersReducedMotion,
+      wheelMultiplier: 0.9,
+      touchMultiplier: 1.6,
+      infinite: false,
+    });
+
+    if (typeof gsap !== 'undefined') {
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(500, 16);
+    } else {
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
       requestAnimationFrame(raf);
     }
-    requestAnimationFrame(raf);
   }
 
-  /* ---------- Mobile Menu ---------- */
+  function scrollToTarget(target, offset) {
+    const top = target.getBoundingClientRect().top + window.scrollY + offset;
+    if (lenis) {
+      lenis.scrollTo(target, {
+        offset,
+        duration: prefersReducedMotion ? 0 : 1.15,
+      });
+      return;
+    }
+    window.scrollTo({ top, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+  }
+
+  /* ---------- Mobile Menu (legacy pages only — site-shell owns mega nav) ---------- */
   const menuToggle = document.getElementById('menu-toggle');
   const nav = document.getElementById('site-nav');
-  const siteHeader = document.getElementById('site-header');
+  const megaNav = document.getElementById('site-mega-nav');
 
   function closeMobileMenu() {
     if (!menuToggle || menuToggle.getAttribute('aria-expanded') !== 'true') return;
 
     menuToggle.setAttribute('aria-expanded', 'false');
     menuToggle.setAttribute('aria-label', 'Open menu');
-    nav.removeAttribute('style');
+    if (nav) nav.removeAttribute('style');
+    if (megaNav) megaNav.hidden = true;
   }
 
-  if (menuToggle && nav) {
+  if (menuToggle && nav && !megaNav) {
     menuToggle.addEventListener('click', () => {
       const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
 
@@ -100,10 +118,7 @@
       e.preventDefault();
       closeMobileMenu();
 
-      lenis.scrollTo(target, {
-        offset: -headerOffset(),
-        duration: prefersReducedMotion ? 0 : 1.15,
-      });
+      scrollToTarget(target, -headerOffset());
     });
   });
 

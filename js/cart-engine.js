@@ -1,5 +1,5 @@
 /**
- * Nike Commercial — Global Cart State Engine
+ * ARCHIVE — Global Cart State Engine
  * Persists cart across multi-page routes via localStorage.
  */
 (function () {
@@ -25,7 +25,7 @@
 
   function getProduct(productId) {
     if (!window.ProductsData) return null;
-    return window.ProductsData.getProductById(productId);
+    return ProductsData.getRawProductById(productId);
   }
 
   function loadCart() {
@@ -72,9 +72,19 @@
   function getCartTotal() {
     return cart.reduce((sum, item) => {
       const product = getProduct(item.productId);
-      const unitPrice = product ? product.price : 0;
+      const unitPrice = product ? product.price : item.price || 0;
       return sum + unitPrice * item.quantity;
     }, 0);
+  }
+
+  function getSubtotal() {
+    return window.Pricing ? Pricing.subtotal(cart) : getCartTotal();
+  }
+
+  function getSummary(opts = {}) {
+    if (window.Pricing) return Pricing.summarize(cart, opts);
+    const total = getCartTotal();
+    return { subtotal: total, discount: 0, shipping: 0, tax: 0, total };
   }
 
   function findLineIndex(productId, size, color) {
@@ -93,9 +103,10 @@
     const sizeStr = String(normalizeSize(size));
     const colorStr = normalizeColor(color);
 
-    const sizeValid = product.sizes.some((s) => String(s) === sizeStr);
+    const sizeEntry = product.sizes.find((s) => String(s.value ?? s) === sizeStr);
+    const sizeValid = Boolean(sizeEntry);
     const colorValid = product.colors.some(
-      (c) => c.toLowerCase() === colorStr.toLowerCase()
+      (c) => (typeof c === 'string' ? c : c.name).toLowerCase() === colorStr.toLowerCase()
     );
 
     if (!sizeValid) {
@@ -106,7 +117,21 @@
       throw new Error(`[CartEngine] Invalid color "${color}" for ${productId}`);
     }
 
+    if (product.inventoryStatus === 'out_of_stock') {
+      throw new Error(`[CartEngine] ${product.name} is out of stock`);
+    }
+
+    if (sizeEntry && sizeEntry.inStock === false && product.inventoryStatus !== 'backorder') {
+      throw new Error(`[CartEngine] Size "${size}" is unavailable for ${productId}`);
+    }
+
     return product;
+  }
+
+  function legacyImageUrl(product) {
+    if (window.ProductSchema) return ProductSchema.getPrimaryImageUrl(product);
+    const img = product.images?.[0];
+    return typeof img === 'string' ? img : img?.url || '';
   }
 
   function addToCart(productId, size, color, quantity = 1) {
@@ -124,7 +149,7 @@
         productId,
         name: product.name,
         price: product.price,
-        image: product.images[0] || '',
+        image: legacyImageUrl(product),
         size: normalizedSize,
         color: normalizedColor,
         quantity: qty,
@@ -177,12 +202,21 @@
   loadCart();
   dispatchUpdate();
 
+  // Cross-tab sync: mirror cart changes made in other tabs/windows.
+  window.addEventListener('storage', (e) => {
+    if (e.key !== STORAGE_KEY) return;
+    loadCart();
+    dispatchUpdate();
+  });
+
   window.CartEngine = Object.freeze({
     EVENT_NAME,
     STORAGE_KEY,
     getCart,
     getCartCount,
     getCartTotal,
+    getSubtotal,
+    getSummary,
     addToCart,
     removeFromCart,
     updateQuantity,

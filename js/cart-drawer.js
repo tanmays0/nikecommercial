@@ -1,5 +1,5 @@
 /**
- * Nike Commercial — Global sliding cart drawer
+ * ARCHIVE — Global sliding cart drawer
  */
 (function () {
   'use strict';
@@ -16,17 +16,8 @@
   let isOpen = false;
   let lastFocus = null;
 
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  function formatPrice(amount) {
-    return `$${amount}`;
-  }
+  const esc = (s) => (window.Dom ? Dom.escapeHtml(s) : String(s));
+  const formatPrice = (n) => (window.Format ? Format.money(n) : `$${n}`);
 
   function injectDrawer() {
     if (document.getElementById('cart-drawer')) return;
@@ -57,11 +48,13 @@
             <ul class="cart-drawer__items" id="cart-drawer-items" aria-label="Bag items"></ul>
           </div>
           <footer class="cart-drawer__footer" id="cart-drawer-footer" hidden>
+            <p class="cart-drawer__shipping" id="cart-drawer-shipping"></p>
             <div class="cart-drawer__total">
-              <span>Total</span>
+              <span>Subtotal</span>
               <span id="cart-drawer-total">$0</span>
             </div>
-            <a href="cart.html" class="btn btn--pill cart-drawer__checkout">View Full Bag</a>
+            <a href="cart.html" class="btn btn--pill btn--outline cart-drawer__checkout">View Full Bag</a>
+            <a href="checkout.html" class="btn btn--pill cart-drawer__checkout">Checkout</a>
           </footer>
         </aside>
       </div>
@@ -100,30 +93,46 @@
 
     if (emptyEl) emptyEl.hidden = true;
     if (footerEl) footerEl.hidden = false;
-    if (totalEl) totalEl.textContent = formatPrice(total);
+
+    const summary = window.CartEngine.getSummary ? CartEngine.getSummary() : null;
+    if (totalEl) totalEl.textContent = formatPrice(summary ? summary.subtotal : total);
+
+    const shipEl = document.getElementById('cart-drawer-shipping');
+    if (shipEl && summary) {
+      shipEl.textContent = window.CartRender
+        ? CartRender.shippingProgressText(summary)
+        : summary.amountToFreeShipping > 0
+          ? `Add ${formatPrice(summary.amountToFreeShipping)} more for free shipping.`
+          : 'Free shipping unlocked.';
+    }
 
     itemsEl.innerHTML = cart
       .map((item) => {
-        const product = window.ProductsData?.getProductById(item.productId);
-        const image = item.image || (product && product.images[0]) || '';
+        const product = window.ProductsData?.getRawProductById(item.productId);
+        const rawImage = item.image || (product && ProductSchema.getPrimaryImageUrl(product)) || '';
+        const image = window.ProductImages ? ProductImages.resizeUrl(rawImage, 176) : rawImage;
         const unitPrice = product ? product.price : item.price;
         const lineTotal = unitPrice * item.quantity;
 
         return `
           <li
             class="cart-drawer__item"
-            data-product-id="${escapeHtml(item.productId)}"
-            data-size="${escapeHtml(item.size)}"
-            data-color="${escapeHtml(item.color)}"
+            data-product-id="${esc(item.productId)}"
+            data-size="${esc(item.size)}"
+            data-color="${esc(item.color)}"
           >
             <a href="product-detail.html?id=${encodeURIComponent(item.productId)}" class="cart-drawer__item-media">
-              <img src="${escapeHtml(image)}" alt="" loading="lazy" decoding="async" width="88" height="110">
+              <img src="${esc(image)}" alt="${esc(item.name || product?.name || 'Cart item')}" loading="lazy" decoding="async" width="88" height="110">
             </a>
             <div class="cart-drawer__item-body">
-              <a href="product-detail.html?id=${encodeURIComponent(item.productId)}" class="cart-drawer__item-name">${escapeHtml(item.name)}</a>
-              <p class="cart-drawer__item-meta">${escapeHtml(item.color)} · Size ${escapeHtml(item.size)}</p>
+              <a href="product-detail.html?id=${encodeURIComponent(item.productId)}" class="cart-drawer__item-name">${esc(item.name)}</a>
+              <p class="cart-drawer__item-meta">${esc(item.color)} · Size ${esc(item.size)}</p>
               <div class="cart-drawer__item-row">
-                <span class="cart-drawer__item-qty">Qty ${item.quantity}</span>
+                <div class="cart-item__qty" role="group" aria-label="Quantity for ${esc(item.name)}">
+                  <button type="button" class="cart-item__qty-btn" data-action="decrease" aria-label="Decrease quantity">−</button>
+                  <span class="cart-item__qty-value">${item.quantity}</span>
+                  <button type="button" class="cart-item__qty-btn" data-action="increase" aria-label="Increase quantity">+</button>
+                </div>
                 <span class="cart-drawer__item-price">${formatPrice(lineTotal)}</span>
               </div>
               <button type="button" class="cart-drawer__item-remove" data-action="remove">Remove</button>
@@ -138,12 +147,21 @@
       const size = row.dataset.size;
       const color = row.dataset.color;
 
-      row.querySelector('[data-action="remove"]')?.addEventListener('click', () => {
-        try {
-          CartEngine.removeFromCart(productId, size, color);
-        } catch (err) {
-          console.error(err);
-        }
+      row.querySelectorAll('[data-action]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const action = btn.dataset.action;
+          const current = CartEngine.getCart().find(
+            (i) => i.productId === productId && String(i.size) === String(size) && i.color === color
+          );
+          if (!current) return;
+          try {
+            if (action === 'remove') CartEngine.removeFromCart(productId, size, color);
+            else if (action === 'increase') CartEngine.updateQuantity(productId, size, color, current.quantity + 1);
+            else if (action === 'decrease') CartEngine.updateQuantity(productId, size, color, current.quantity - 1);
+          } catch (_) {
+            if (window.showCartToast) showCartToast('Could not update bag.');
+          }
+        });
       });
     });
   }

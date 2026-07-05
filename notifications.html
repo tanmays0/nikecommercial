@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Notifications">
+  <meta name="theme-color" content="#181510">
+  <title>Notifications</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="mask-icon" href="favicon.svg" color="#181510">
+  <link rel="apple-touch-icon" href="apple-touch-icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="page-inner" data-account="notifications">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div id="site-header-mount"></div>
+  <main id="main-content">
+    <div class="container account-page">
+      <a href="profile.html" class="account-page__back">← Back to account</a>
+      <h1 class="account-page__title">Notifications</h1>
+      <p class="account-page__lead">Email and push preferences.</p>
+      <form id="notifications-form" class="account-form notifications-form">
+        <label class="toggle-row"><span><strong>Promotions</strong><small>Sales, drops, and offers</small></span><input type="checkbox" name="emailPromotions"></label>
+        <label class="toggle-row"><span><strong>Order updates</strong><small>Confirmations and shipping</small></span><input type="checkbox" name="emailOrders"></label>
+        <label class="toggle-row"><span><strong>Product drops</strong><small>Push alerts for launches</small></span><input type="checkbox" name="pushDrops"></label>
+        <label class="toggle-row"><span><strong>SMS shipping</strong><small>Text me delivery updates</small></span><input type="checkbox" name="smsShipping"></label>
+        <p class="form-message" id="notifications-message" role="status" hidden></p>
+        <button type="submit" class="btn btn--pill">Save Preferences</button>
+      </form>
+    </div>
+  </main>
+  <div id="site-footer-mount"></div>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="js/site-config.js"></script>
+  <script src="js/lib/dom.js"></script>
+  <script src="js/lib/format.js"></script>
+  <script src="js/lib/validation.js"></script>
+  <script src="js/auth-engine.js"></script>
+  <script src="js/wishlist-engine.js"></script>
+  <script src="js/cart-engine.js"></script>
+  <script src="js/cart-ui.js"></script>
+  <script src="js/cart-drawer.js"></script>
+  <script src="js/seo.js"></script>
+  <script src="js/site-shell.js"></script>
+  <script src="js/coupon-engine.js"></script>
+  <script src="js/account-store.js"></script>
+  <script src="js/order-engine.js"></script>
+  <script src="js/pages.js"></script>
+  <script src="js/motion.js"></script>
+  <script src="js/account-page.js"></script>
+
+</body>
+</html>

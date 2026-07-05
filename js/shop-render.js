@@ -1,5 +1,5 @@
 /**
- * Nike Commercial — Shop page renderer (ProductsData → grid)
+ * ARCHIVE — Shop page renderer (ProductsData → grid)
  */
 (function () {
   'use strict';
@@ -8,7 +8,7 @@
   const categoriesEl = document.getElementById('shop-categories');
   const resultCount = document.getElementById('shop-result-count');
 
-  if (!grid || !window.ProductsData) return;
+  if (!grid || !window.ProductsData || !window.ProductCard) return;
 
   const { PRODUCTS, CATEGORIES } = window.ProductsData;
 
@@ -27,13 +27,14 @@
     return CATEGORY_LABELS[cat] || cat;
   }
 
-  function formatPrice(price) {
-    return `$${price}`;
+  function categoryMatches(product, cat) {
+    if (cat === 'all') return true;
+    return String(product.category).toLowerCase() === cat.toLowerCase();
   }
 
   function getFilteredProducts() {
     if (activeCategory === 'all') return PRODUCTS;
-    return PRODUCTS.filter((p) => p.category === activeCategory);
+    return PRODUCTS.filter((p) => categoryMatches(p, activeCategory));
   }
 
   function renderCategories() {
@@ -77,20 +78,7 @@
     }
 
     grid.innerHTML = products
-      .map(
-        (p) => `
-      <a href="product-detail.html?id=${encodeURIComponent(p.id)}" class="shop-card" role="listitem" aria-label="${p.name}, ${formatPrice(p.price)}">
-        <div class="shop-card__media">
-          <img src="${p.images[0]}" alt="" loading="lazy" decoding="async" width="600" height="750">
-        </div>
-        <h2 class="shop-card__title">${p.name.replace(/^Nike /, '')}</h2>
-        <div class="shop-card__meta">
-          <span class="shop-card__price">${formatPrice(p.price)}</span>
-          <span class="shop-card__tag">${formatCategory(p.category)}</span>
-        </div>
-      </a>
-    `
-      )
+      .map((p) => ProductCard.buildShopCard(p, { tag: formatCategory(p.category) }))
       .join('');
 
     if (window.initShopCardHovers) {

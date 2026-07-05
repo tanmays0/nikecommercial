@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Checkout">
+  <meta name="theme-color" content="#181510">
+  <title>Checkout — ARCHIVE</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="mask-icon" href="favicon.svg" color="#181510">
+  <link rel="apple-touch-icon" href="apple-touch-icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="page-inner">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div id="site-header-mount"></div>
+  <main id="main-content">
+    <div class="container checkout-page">
+      <h1 class="checkout-page__title">Checkout</h1>
+      <ol class="checkout-steps">
+        <li data-checkout-step="1" class="is-active"><span class="checkout-steps__num">1</span> Shipping</li>
+        <li data-checkout-step="2"><span class="checkout-steps__num">2</span> Payment</li>
+        <li data-checkout-step="3"><span class="checkout-steps__num">3</span> Review</li>
+      </ol>
+      <div class="checkout-layout">
+        <form id="checkout-form" class="checkout-form" novalidate>
+
+          <section data-checkout-panel="1" class="checkout-panel">
+            <h2 class="checkout-panel__title">Shipping Address</h2>
+            <div class="checkout-grid">
+              <label class="form-field"><span>Full Name</span><input name="name" autocomplete="name" required><small class="form-field__error" data-error-for="name"></small></label>
+              <label class="form-field"><span>Email</span><input type="email" name="email" autocomplete="email" required><small class="form-field__error" data-error-for="email"></small></label>
+              <label class="form-field form-field--wide"><span>Address</span><input name="address" autocomplete="address-line1" required><small class="form-field__error" data-error-for="address"></small></label>
+              <label class="form-field"><span>City</span><input name="city" autocomplete="address-level2" required><small class="form-field__error" data-error-for="city"></small></label>
+              <label class="form-field"><span>State</span><input name="state" autocomplete="address-level1" required><small class="form-field__error" data-error-for="state"></small></label>
+              <label class="form-field"><span>ZIP Code</span><input name="zip" inputmode="numeric" autocomplete="postal-code" required><small class="form-field__error" data-error-for="zip"></small></label>
+              <label class="form-field"><span>Country</span><input name="country" value="USA" autocomplete="country-name" required><small class="form-field__error" data-error-for="country"></small></label>
+            </div>
+            <fieldset class="checkout-shipping">
+              <legend>Shipping Method</legend>
+              <label class="checkout-shipping__option"><input type="radio" name="shipping" value="standard" checked> <span>Standard (3–5 days) — <em id="ship-standard-cost">Free over $75</em></span></label>
+              <label class="checkout-shipping__option"><input type="radio" name="shipping" value="expedited"> <span>Expedited (1–2 days) — <em>$18.00</em></span></label>
+            </fieldset>
+            <div class="checkout-panel__actions">
+              <button type="button" class="btn btn--pill" data-checkout-next>Continue to Payment</button>
+            </div>
+          </section>
+
+          <section data-checkout-panel="2" class="checkout-panel" hidden>
+            <h2 class="checkout-panel__title">Payment</h2>
+            <p class="checkout-panel__note">This is a simulated checkout — no real card is charged. Use <strong>4242 4242 4242 4242</strong> for success, or a number ending in an odd digit to see a decline.</p>
+            <div class="checkout-grid">
+              <label class="form-field form-field--wide"><span>Name on Card</span><input name="cardName" autocomplete="cc-name" required><small class="form-field__error" data-error-for="cardName"></small></label>
+              <label class="form-field form-field--wide"><span>Card Number</span><input name="cardNumber" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="19" required><small class="form-field__error" data-error-for="cardNumber"></small><span class="card-brand" id="card-brand"></span></label>
+              <label class="form-field"><span>Expiry (MM/YY)</span><input name="cardExpiry" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" maxlength="5" required><small class="form-field__error" data-error-for="cardExpiry"></small></label>
+              <label class="form-field"><span>CVC</span><input name="cardCvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4" required><small class="form-field__error" data-error-for="cardCvc"></small></label>
+            </div>
+            <div class="checkout-panel__actions">
+              <button type="button" class="btn btn--pill btn--outline" data-checkout-back>Back</button>
+              <button type="button" class="btn btn--pill" data-checkout-next>Review Order</button>
+            </div>
+          </section>
+
+          <section data-checkout-panel="3" class="checkout-panel" hidden>
+            <h2 class="checkout-panel__title">Review &amp; Place Order</h2>
+            <div class="checkout-review" id="checkout-review"></div>
+            <p class="form-message" id="checkout-message" role="alert" hidden></p>
+            <div class="checkout-panel__actions">
+              <button type="button" class="btn btn--pill btn--outline" data-checkout-back>Back</button>
+              <button type="submit" class="btn btn--pill" id="place-order-btn">Place Order</button>
+            </div>
+          </section>
+
+        </form>
+
+        <aside class="checkout-summary" aria-label="Order summary">
+          <h2 class="checkout-summary__title">Order Summary</h2>
+          <ul class="checkout-summary__items" id="checkout-summary-items"></ul>
+          <form class="coupon-form" id="coupon-form">
+            <label class="visually-hidden" for="coupon-input">Promo code</label>
+            <input id="coupon-input" name="coupon" placeholder="Promo code" autocomplete="off">
+            <button type="submit" class="btn btn--pill btn--outline">Apply</button>
+          </form>
+          <p class="coupon-message" id="coupon-message" role="status" hidden></p>
+          <dl class="checkout-summary__rows" id="checkout-summary-rows"></dl>
+          <div class="checkout-summary__total"><span>Total</span><span id="checkout-summary-total">$0</span></div>
+        </aside>
+      </div>
+    </div>
+  </main>
+  <div id="site-footer-mount"></div>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="js/site-config.js"></script>
+  <script src="js/lib/dom.js"></script>
+  <script src="js/lib/format.js"></script>
+  <script src="js/lib/validation.js"></script>
+  <script src="js/auth-engine.js"></script>
+  <script src="js/wishlist-engine.js"></script>
+  <script src="js/cart-engine.js"></script>
+  <script src="js/cart-ui.js"></script>
+  <script src="js/cart-drawer.js"></script>
+  <script src="js/seo.js"></script>
+  <script src="js/site-shell.js"></script>
+  <script src="js/product-schema.js"></script>
+  <script src="js/products-catalog.generated.js"></script>
+  <script src="js/product-images.js"></script>
+  <script src="js/product-card.js"></script>
+  <script src="js/products-data.js"></script>
+  <script src="js/mock-service.js"></script>
+  <script src="js/pricing.js"></script>
+  <script src="js/lib/cart-render.js"></script>
+  <script src="js/coupon-engine.js"></script>
+  <script src="js/account-store.js"></script>
+  <script src="js/order-engine.js"></script>
+  <script src="js/pages.js"></script>
+  <script src="js/motion.js"></script>
+  <script src="js/checkout-page.js"></script>
+
+</body>
+</html>

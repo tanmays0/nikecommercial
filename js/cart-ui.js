@@ -1,5 +1,5 @@
 /**
- * Nike Commercial — Cart UI (badge + toast feedback)
+ * ARCHIVE — Cart UI (badge + toast feedback)
  */
 (function () {
   'use strict';
@@ -22,6 +22,10 @@
       if (badgeLink) {
         badgeLink.setAttribute('aria-label', 'Shopping bag, empty');
       }
+    }
+
+    if (window.Dom && count > 0) {
+      Dom.announce(`Shopping bag updated, ${count} item${count === 1 ? '' : 's'}`);
     }
   }
 
