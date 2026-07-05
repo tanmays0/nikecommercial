@@ -26,3 +26,9 @@ node_modules/
 
 # Cursor local state
 .cursor/
+
+# Local perf verification artifacts
+.perf-baseline/
+.perf-before/
+.perf-after/
+.lighthouse-*.json

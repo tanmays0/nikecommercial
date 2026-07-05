@@ -35,8 +35,8 @@
 
     const primaryNav = isHome
       ? `
-        <a href="#first-look">New</a>
-        <a href="#best-of">Air Max</a>
+        <a href="new-arrivals.html">New</a>
+        <a href="trending.html">Trending</a>
         <a href="#featured">Featured</a>
         <a href="shop.html">Shop</a>
       `

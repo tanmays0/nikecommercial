@@ -36,6 +36,39 @@
     infinite: false,
   });
 
+  /* Hold scroll until hero frames are fully decoded (prevents mid-scroll jank) */
+  const heroLoader = document.getElementById('hero-loader');
+  const heroLoaderBar = document.getElementById('hero-loader-bar');
+  const heroLoaderText = document.getElementById('hero-loader-text');
+  let heroScrollReady = prefersReducedMotion;
+
+  if (!heroScrollReady) {
+    lenis.stop();
+    document.body.classList.add('is-hero-loading');
+  }
+
+  function setHeroLoaderProgress(ratio) {
+    if (!heroLoaderBar) return;
+    const pct = Math.round(Math.min(1, Math.max(0, ratio)) * 100);
+    heroLoaderBar.style.width = `${pct}%`;
+    if (heroLoaderText) {
+      heroLoaderText.textContent = pct >= 100 ? 'Ready' : `Preparing the run… ${pct}%`;
+    }
+  }
+
+  function releaseHeroScroll() {
+    if (heroScrollReady) return;
+    heroScrollReady = true;
+    document.body.classList.remove('is-hero-loading');
+    if (heroLoader) {
+      heroLoader.classList.add('is-done');
+      heroLoader.setAttribute('aria-busy', 'false');
+      setTimeout(() => heroLoader.remove(), 450);
+    }
+    lenis.start();
+    ScrollTrigger.refresh();
+  }
+
   lenis.on('scroll', ScrollTrigger.update);
 
   ScrollTrigger.scrollerProxy(document.body, {
@@ -125,10 +158,16 @@
     section: heroSection,
     foregroundCanvas: tigerCanvas,
     ambientCanvas: ambientCanvas,
+    onProgress: setHeroLoaderProgress,
     onReady: onExperienceReady,
-    onFullyLoaded: onTigerFullyLoaded,
+    onFullyLoaded: () => {
+      setHeroLoaderProgress(1);
+      releaseHeroScroll();
+      onTigerFullyLoaded();
+    },
     onError: () => {
       gsap.set(siteHeader, { opacity: 1, y: 0 });
+      releaseHeroScroll();
       console.error('[TigerExperience] Failed to load hero frames.');
     },
   });

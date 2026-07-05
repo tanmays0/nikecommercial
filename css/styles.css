@@ -377,7 +377,54 @@ ul {
   width: 100%;
   height: 100%;
   background: var(--color-carbon);
+  contain: strict;
   isolation: isolate;
+}
+
+body.is-hero-loading {
+  overflow: hidden;
+}
+
+.hero__loader {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: clamp(2rem, 8vh, 4rem);
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-premium);
+}
+
+.hero__loader.is-done {
+  opacity: 0;
+}
+
+.hero__loader-track {
+  width: min(12rem, 42vw);
+  height: 2px;
+  background: rgb(242 238 230 / 0.25);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  margin-bottom: var(--space-3);
+}
+
+.hero__loader-bar {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--color-bone);
+  transition: width 0.18s linear;
+}
+
+.hero__loader-text {
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: rgb(242 238 230 / 0.82);
 }
 
 /* Premium legibility wash â€” sits above canvases, below type */
@@ -411,6 +458,8 @@ ul {
   mix-blend-mode: soft-light;
   filter: blur(56px) saturate(1.18);
   pointer-events: none;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 /* Foreground canvas â€” cheetah sequence */
@@ -420,6 +469,7 @@ ul {
   width: 100%;
   height: 100%;
   z-index: 2;
+  transform: translateZ(0);
 }
 
 /* Gradient atmosphere â€” depth without obscuring the run */

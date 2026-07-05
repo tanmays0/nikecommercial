@@ -8,6 +8,10 @@ class TigerExperience {
     'assets/frames/ezgif-frame-',
   ];
   static MAX_FRAMES = 500;
+  /** Load/play every Nth source frame (242 → 121) — same scroll range, half decode/paint cost */
+  static FRAME_STEP = 2;
+  static TARGET_MAX_WIDTH = 1280;
+  static PRELOAD_PARALLEL = 10;
   static BOOTSTRAP_COUNT = 30;
   static PRELOAD_BATCH_IDLE = 6;
   static PRELOAD_BATCH_ACTIVE = 3;
@@ -15,6 +19,8 @@ class TigerExperience {
   static PLAYHEAD_BEHIND = 12;
   static SCROLL_IDLE_MS = 200;
   static LOAD_RETRIES = 4;
+  /** Ambient backing-store scale (fewer pixels under CSS blur) */
+  static AMBIENT_RES_SCALE = 0.5;
   /** Minimum blend delta before redrawing (reduces redundant paints) */
   static BLEND_EPSILON = 0.0012;
 
@@ -47,6 +53,7 @@ class TigerExperience {
     this._metricsCache = null;
 
     this.isReady = false;
+    this._scrollScrubEnabled = false;
     this._preloadComplete = false;
     this._isInteracting = false;
     this._scrollIdleTimer = null;
@@ -95,24 +102,94 @@ class TigerExperience {
         throw new Error('No animation frames found in assets/frames/');
       }
 
+      this._playbackIndices = this._buildPlaybackIndices();
       this.frames = new Array(this.frameCount);
 
-      await this._bootstrapFrames();
-
+      // First frame fast — unblocks first paint / LCP while the rest decodes
+      await this._loadBatch([this._playbackIndices[0]]);
       this._setupCanvases();
       this._forceRender(0);
-      this._setupScrollTrigger();
       this.isReady = true;
       this._inView = true;
       this.attachToTicker();
+      if (this.onReady) this.onReady(this._playbackIndices.length);
 
-      if (this.onReady) this.onReady(this.frameCount);
+      // Decode every playback frame before scroll-scrub (no mid-scroll pop-in)
+      await this._preloadAllPlaybackFrames();
 
-      this._startBackgroundPreload();
+      this._preloadComplete = true;
+      this._scrollScrubEnabled = true;
+      this._setupScrollTrigger();
+      this._forceRender(0);
+
+      if (this.onFullyLoaded) this.onFullyLoaded(this._playbackIndices.length);
     } catch (err) {
       console.error('[TigerExperience]', err.message);
       if (this.onError) this.onError(err);
     }
+  }
+
+  _buildPlaybackIndices() {
+    const step = TigerExperience.FRAME_STEP;
+    const indices = [];
+    for (let i = 0; i < this.frameCount; i += step) {
+      indices.push(i);
+    }
+    const last = this.frameCount - 1;
+    if (indices[indices.length - 1] !== last) {
+      indices.push(last);
+    }
+    return indices;
+  }
+
+  async _preloadAllPlaybackFrames() {
+    const remaining = this._playbackIndices.filter((i) => !this._frameReady(this.frames[i]));
+    const batchSize = TigerExperience.PRELOAD_PARALLEL;
+
+    for (let start = 0; start < remaining.length; start += batchSize) {
+      const batch = remaining.slice(start, start + batchSize);
+      await this._loadBatch(batch);
+      this._reportProgress();
+      await this._wait(0);
+    }
+  }
+
+  _frameReady(frame) {
+    if (!frame) return false;
+    return Boolean(frame.naturalWidth || frame.width);
+  }
+
+  _frameDimensions(frame) {
+    return {
+      w: frame.naturalWidth || frame.width || 1,
+      h: frame.naturalHeight || frame.height || 1,
+    };
+  }
+
+  _getTargetDecodeWidth() {
+    const vw = window.innerWidth || 1280;
+    return Math.min(TigerExperience.TARGET_MAX_WIDTH, Math.round(vw * 1.35));
+  }
+
+  async _decodeFrameBlob(blob) {
+    const targetW = this._getTargetDecodeWidth();
+    if (typeof createImageBitmap === 'function') {
+      try {
+        return await createImageBitmap(blob, {
+          resizeWidth: targetW,
+          resizeQuality: 'medium',
+        });
+      } catch (_) {
+        /* fall through to Image */
+      }
+    }
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('Image decode failed'));
+      img.src = URL.createObjectURL(blob);
+    });
   }
 
   destroy() {
@@ -132,7 +209,7 @@ class TigerExperience {
 
   _frameSrc(index) {
     const num = String(index + 1).padStart(3, '0');
-    return `${this.framePath}${num}.jpg`;
+    return `${this.framePath}${num}.webp`;
   }
 
   async _resolveFramePath() {
@@ -194,12 +271,12 @@ class TigerExperience {
   /* ---------- Preloading ---------- */
 
   _loadFrame(index, attempt = 0) {
-    if (this.frames[index]?.naturalWidth) {
+    if (this._frameReady(this.frames[index])) {
       return Promise.resolve({ index, img: this.frames[index] });
     }
 
     const cached = this._probeCache.get(index);
-    if (cached && cached.naturalWidth) {
+    if (cached && this._frameReady(cached)) {
       this.frames[index] = cached;
       return Promise.resolve({ index, img: cached });
     }
@@ -207,7 +284,7 @@ class TigerExperience {
     if (this._loadingIndices.has(index)) {
       return new Promise((resolve, reject) => {
         const check = () => {
-          if (this.frames[index]?.naturalWidth) {
+          if (this._frameReady(this.frames[index])) {
             resolve({ index, img: this.frames[index] });
             return;
           }
@@ -223,37 +300,36 @@ class TigerExperience {
 
     this._loadingIndices.add(index);
 
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.decoding = 'async';
+    const src = `${this._frameSrc(index)}${attempt > 0 ? `?r=${attempt}` : ''}`;
 
-      img.onload = () => {
+    return fetch(src)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.blob();
+      })
+      .then((blob) => this._decodeFrameBlob(blob))
+      .then((img) => {
         this._loadingIndices.delete(index);
         this._probeCache.set(index, img);
-        resolve({ index, img });
-      };
-
-      img.onerror = () => {
+        this.frames[index] = img;
+        return { index, img };
+      })
+      .catch((err) => {
         if (attempt < TigerExperience.LOAD_RETRIES) {
           const delay = 150 * (attempt + 1);
-          setTimeout(() => {
-            this._loadFrame(index, attempt + 1)
-              .then(resolve)
-              .catch(reject);
-          }, delay);
-          return;
+          return new Promise((resolve, reject) => {
+            setTimeout(() => {
+              this._loadFrame(index, attempt + 1).then(resolve).catch(reject);
+            }, delay);
+          });
         }
         this._loadingIndices.delete(index);
-        reject(new Error(`Failed to load frame ${index + 1}: ${this._frameSrc(index)}`));
-      };
-
-      const suffix = attempt > 0 ? `?r=${attempt}` : '';
-      img.src = `${this._frameSrc(index)}${suffix}`;
-    });
+        throw err;
+      });
   }
 
   async _loadBatch(indices) {
-    const pending = indices.filter((i) => !this.frames[i]?.naturalWidth);
+    const pending = indices.filter((i) => !this._frameReady(this.frames[i]));
     if (pending.length === 0) return 0;
 
     const results = await Promise.all(pending.map((index) => this._loadFrame(index)));
@@ -265,30 +341,21 @@ class TigerExperience {
     return results.length;
   }
 
-  async _bootstrapFrames() {
-    const quickStart = Math.min(TigerExperience.BOOTSTRAP_COUNT, this.frameCount);
-
-    for (let start = 0; start < quickStart; start += 10) {
-      const end = Math.min(start + 10, quickStart);
-      const indices = Array.from({ length: end - start }, (_, i) => start + i);
-      await this._loadBatch(indices);
-    }
-  }
-
   _reportProgress() {
     if (!this.onProgress) return;
 
-    const loaded = this.frames.reduce(
-      (count, frame) => count + (frame?.naturalWidth ? 1 : 0),
+    const loaded = this._playbackIndices.reduce(
+      (count, index) => count + (this._frameReady(this.frames[index]) ? 1 : 0),
       0
     );
-    this.onProgress(loaded / this.frameCount);
+    this.onProgress(loaded / this._playbackIndices.length);
   }
 
   _getPlayheadIndex() {
-    const last = this.frameCount - 1;
+    const last = this._playbackIndices.length - 1;
     const playhead = Math.max(this.targetProgress, this.displayProgress);
-    return Math.min(Math.round(playhead * last), last);
+    const eff = Math.min(Math.round(playhead * last), last);
+    return this._playbackIndices[eff];
   }
 
   _getPlayheadPriority() {
@@ -299,7 +366,7 @@ class TigerExperience {
 
     const push = (index) => {
       if (index < 0 || index > last || seen.has(index)) return;
-      if (this.frames[index]?.naturalWidth) return;
+      if (this._frameReady(this.frames[index])) return;
       seen.add(index);
       priority.push(index);
     };
@@ -310,7 +377,7 @@ class TigerExperience {
     }
 
     for (let i = 0; i < this.frameCount; i++) {
-      if (!seen.has(i) && !this.frames[i]?.naturalWidth) {
+      if (!seen.has(i) && !this._frameReady(this.frames[i])) {
         priority.push(i);
       }
     }
@@ -323,7 +390,7 @@ class TigerExperience {
     const last = this.frameCount - 1;
 
     for (let i = center; i <= Math.min(center + 4, last); i++) {
-      if (!this.frames[i]?.naturalWidth) return true;
+      if (!this._frameReady(this.frames[i])) return true;
     }
 
     return false;
@@ -383,7 +450,7 @@ class TigerExperience {
     const urgent = [];
 
     for (let i = center; i <= Math.min(center + 2, this.frameCount - 1); i++) {
-      if (!this.frames[i]?.naturalWidth && !this._loadingIndices.has(i)) {
+      if (!this._frameReady(this.frames[i]) && !this._loadingIndices.has(i)) {
         urgent.push(i);
       }
     }
@@ -429,14 +496,14 @@ class TigerExperience {
     const clamped = Math.min(Math.max(index, 0), last);
     const direct = this.frames[clamped];
 
-    if (direct?.naturalWidth) return direct;
+    if (this._frameReady(direct)) return direct;
 
     for (let i = clamped - 1; i >= 0; i--) {
-      if (this.frames[i]?.naturalWidth) return this.frames[i];
+      if (this._frameReady(this.frames[i])) return this.frames[i];
     }
 
     for (let i = clamped + 1; i < this.frameCount; i++) {
-      if (this.frames[i]?.naturalWidth) return this.frames[i];
+      if (this._frameReady(this.frames[i])) return this.frames[i];
     }
 
     return null;
@@ -445,17 +512,17 @@ class TigerExperience {
   /* ---------- Canvas Setup ---------- */
 
   _setupCanvases() {
-    this._resizeCanvas(this.foregroundCanvas, this.fgCtx, this.fgSize);
-    this._resizeCanvas(this.ambientCanvas, this.ambCtx, this.ambSize);
+    this._resizeCanvas(this.foregroundCanvas, this.fgCtx, this.fgSize, 1);
+    this._resizeCanvas(this.ambientCanvas, this.ambCtx, this.ambSize, TigerExperience.AMBIENT_RES_SCALE);
     this._metricsCache = null;
     this._stateA = -1;
     this._stateB = -1;
     this._stateBlend = -1;
   }
 
-  _resizeCanvas(canvas, ctx, sizeStore) {
-    const maxDpr = window.innerWidth < 768 ? 1.25 : 1.75;
-    const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
+  _resizeCanvas(canvas, ctx, sizeStore, internalScale = 1) {
+    const maxDpr = window.innerWidth < 768 ? 1 : 1.25;
+    const dpr = Math.min(window.devicePixelRatio || 1, maxDpr) * internalScale;
     const rect = canvas.getBoundingClientRect();
     const w = rect.width;
     const h = rect.height;
@@ -508,12 +575,13 @@ class TigerExperience {
   /* ---------- Render Loop (GSAP ticker, synced with Lenis) ---------- */
 
   _getFrameIndices(progress) {
-    const last = this.frameCount - 1;
+    const indices = this._playbackIndices;
+    const last = indices.length - 1;
     const floatFrame = progress * last;
-    const frameA = Math.min(Math.floor(floatFrame), last);
-    const frameB = Math.min(frameA + 1, last);
-    const blend = frameB === frameA ? 0 : floatFrame - frameA;
-    return { frameA, frameB, blend };
+    const effA = Math.min(Math.floor(floatFrame), last);
+    const effB = Math.min(effA + 1, last);
+    const blend = effB === effA ? 0 : floatFrame - effA;
+    return { frameA: indices[effA], frameB: indices[effB], blend };
   }
 
   _shouldRedraw(frameA, frameB, blend) {
@@ -544,7 +612,7 @@ class TigerExperience {
 
     const { frameA, frameB, blend } = this._getFrameIndices(this.displayProgress);
 
-    if (frameB > frameA && !this.frames[frameB]?.naturalWidth) {
+    if (frameB > frameA && !this._frameReady(this.frames[frameB])) {
       this._kickPlayheadPreload();
     }
 
@@ -597,7 +665,8 @@ class TigerExperience {
     const ref = this._getLoadedFrame(0);
     if (!ref) return { dx: 0, dy: 0, dw: cw, dh: ch };
 
-    const imgRatio = ref.naturalWidth / ref.naturalHeight;
+    const { w, h } = this._frameDimensions(ref);
+    const imgRatio = w / h;
     const canvasRatio = cw / ch;
     let dw, dh, dx, dy;
 
