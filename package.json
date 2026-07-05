@@ -2,7 +2,8 @@
   "name": "archive-marketplace",
   "private": true,
   "scripts": {
-    "start": "serve -l 55333"
+    "start": "node scripts/start-dev.js",
+    "dev": "npm start"
   },
   "devDependencies": {
     "playwright": "^1.61.1",
